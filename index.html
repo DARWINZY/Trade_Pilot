@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradePilot AI — ระบบนำทางการค้าระหว่างประเทศ</title>
+  <meta name="description" content="ตัวช่วยเช็คลิสต์ คำนวณภาษี และตรวจสอบกฎระเบียบสำหรับการนำเข้า-ส่งออกสินค้าระหว่างประเทศ">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animated"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="#" class="navbar-brand" onclick="location.reload()">
+      <div class="logo-icon">🌍</div>
+      <div>
+        <span class="brand-text">TradePilot AI</span>
+        <span class="brand-sub">Smart Trade Assistant</span>
+      </div>
+    </a>
+    <div class="navbar-actions">
+      <button class="theme-toggle" id="theme-toggle" title="สลับโหมดสี">☀️</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="hero-badge">
+      <div class="pulse-dot"></div>
+      พร้อมใช้งานสำหรับประเทศไทย
+    </div>
+    <h1 class="hero-title">การค้าระหว่างประเทศ<br><span class="gradient-text">เรื่องง่ายกว่าที่คิด</span></h1>
+    <p class="hero-subtitle">
+      ผู้ช่วยดิจิทัลสำหรับนักธุรกิจไทย นำทางคุณทุกขั้นตอน ตั้งแต่เช็คลิสต์นำเข้า-ส่งออก, คำนวณภาษี, 
+      ไปจนถึงตรวจสินค้าต้องห้าม — รวมไว้ในที่เดียว ไม่ต้องปวดหัวกับกฎระเบียบ
+    </p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" id="start-btn">
+        🚀 เริ่มต้นใช้งานฟรี
+      </button>
+      <a href="#about" class="btn btn-secondary">
+        📖 เรียนรู้เพิ่มเติม
+      </a>
+    </div>
+  </section>
+
+  <!-- Main App Container -->
+  <main class="main-container">
+
+    <!-- Section: Country & Trade Type Selector -->
+    <section class="section" id="country-selector">
+      <div class="section-header">
+        <h2>🌐 เลือกลักษณะการค้า</h2>
+        <p>ระบุต้นทาง ปลายทาง และประเภทสินค้าของคุณ เพื่อรับคำแนะนำที่แม่นยำ</p>
+      </div>
+
+      <div class="country-selector-card">
+        <div class="trade-type-selector">
+          <button class="trade-type-btn active" data-type="import">
+            <span class="trade-icon">📥</span>
+            นำเข้า (Import)
+          </button>
+          <button class="trade-type-btn" data-type="export">
+            <span class="trade-icon">📤</span>
+            ส่งออก (Export)
+          </button>
+        </div>
+
+        <div class="country-row">
+          <div class="form-group">
+            <label class="form-label">ประเทศต้นทาง (Origin)</label>
+            <select class="form-select" id="origin-country">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          
+          <button class="country-swap" id="swap-countries" title="สลับประเทศ">⇄</button>
+          
+          <div class="form-group">
+            <label class="form-label">ประเทศปลายทาง (Destination)</label>
+            <select class="form-select" id="dest-country">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 2rem;">
+          <label class="form-label">หมวดหมู่สินค้าหลัก</label>
+          <select class="form-select" id="product-category">
+            <!-- Populated by JS -->
+          </select>
+        </div>
+
+        <div class="start-btn-wrapper">
+          <button class="btn btn-primary" id="to-dashboard-btn" style="width: 100%; max-width: 300px; justify-content: center;">
+            ดำเนินการต่อ ➡️
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Dashboard (Feature Grid) -->
+    <section class="section" id="dashboard">
+      <div class="dashboard-context" id="dashboard-context">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="section-header" style="margin-bottom: 1.5rem;">
+        <h2>เมนูการใช้งาน</h2>
+      </div>
+
+      <div class="warning-banner" id="dashboard-banner" style="margin-bottom: 2rem;">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="feature-grid">
+        <!-- Checklist Card -->
+        <div class="feature-card card-checklist" id="card-checklist">
+          <div class="card-icon">📋</div>
+          <h3 class="card-title">เช็คลิสต์ขั้นตอน</h3>
+          <p class="card-desc">รายการสิ่งที่ต้องทำ Step-by-step ตั้งแต่เริ่มจนรับสินค้า พร้อมเอกสารที่ต้องใช้</p>
+        </div>
+
+        <!-- Calculator Card -->
+        <div class="feature-card card-calculator" id="card-calculator">
+          <div class="card-icon">🧮</div>
+          <h3 class="card-title">คำนวณภาษีนำเข้า</h3>
+          <p class="card-desc">คำนวณมูลค่า CIF, อากรขาเข้า และภาษีมูลค่าเพิ่ม (VAT 7%) ก่อนตัดสินใจ</p>
+        </div>
+
+        <!-- Product Check Card -->
+        <div class="feature-card card-product" id="card-product">
+          <div class="card-icon">🚫</div>
+          <h3 class="card-title">ตรวจสินค้าต้องห้าม</h3>
+          <p class="card-desc">เช็คว่าสินค้าของคุณเป็นสินค้าต้องห้าม หรือต้องขอใบอนุญาตพิเศษหรือไม่</p>
+        </div>
+
+        <!-- Warnings Card -->
+        <div class="feature-card card-warnings" id="card-warnings">
+          <div class="card-icon">⚠️</div>
+          <h3 class="card-title">กฎระเบียบ & คำเตือน</h3>
+          <p class="card-desc">ตรวจสอบกฎหมาย, สิทธิ FTA, และข้อควรระวังสำคัญสำหรับสินค้านี้</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Panel: Checklist -->
+    <section class="feature-panel" id="panel-checklist">
+      <div class="panel-header">
+        <button class="panel-back">←</button>
+        <h2 class="panel-title">📋 เช็คลิสต์ขั้นตอน</h2>
+      </div>
+      <div id="checklist-wrapper"></div>
+    </section>
+
+    <!-- Feature Panel: Calculator -->
+    <section class="feature-panel" id="panel-calculator">
+      <div class="panel-header">
+        <button class="panel-back">←</button>
+        <h2 class="panel-title">🧮 คำนวณภาษีนำเข้า</h2>
+      </div>
+      <div id="calculator-wrapper"></div>
+    </section>
+
+    <!-- Feature Panel: Product Check -->
+    <section class="feature-panel" id="panel-product">
+      <div class="panel-header">
+        <button class="panel-back">←</button>
+        <h2 class="panel-title">🚫 ตรวจสินค้าต้องห้าม / จำกัด</h2>
+      </div>
+      <div id="product-checker-wrapper"></div>
+    </section>
+
+    <!-- Feature Panel: Warnings -->
+    <section class="feature-panel" id="panel-warnings">
+      <div class="panel-header">
+        <button class="panel-back">←</button>
+        <h2 class="panel-title">⚠️ กฎระเบียบ & คำเตือน</h2>
+      </div>
+      <div id="warnings-wrapper"></div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>TradePilot AI &copy; 2026. สร้างเพื่อเป็นข้อมูลเบื้องต้นเท่านั้น ไม่ใช่คำแนะนำทางกฎหมาย.</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+      <a href="https://www.customs.go.th" target="_blank" rel="noopener">กรมศุลกากร</a> | 
+      <a href="#" target="_blank" rel="noopener">GitHub Repository</a>
+    </p>
+  </footer>
+
+  <!-- App Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/checklist.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/product-check.js"></script>
+  <script src="js/warnings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
