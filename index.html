@@ -13,15 +13,15 @@
 
   <!-- Navbar -->
   <nav class="navbar">
-    <a href="#" class="navbar-brand" onclick="location.reload()">
-      <div class="logo-icon">🌍</div>
+    <a href="#home" class="navbar-brand">
+      <div class="logo-icon"><i data-lucide="globe"></i></div>
       <div>
         <span class="brand-text">TradePilot AI</span>
         <span class="brand-sub">Smart Trade Assistant</span>
       </div>
     </a>
     <div class="navbar-actions">
-      <button class="theme-toggle" id="theme-toggle" title="สลับโหมดสี">☀️</button>
+      <button class="theme-toggle" id="theme-toggle" title="สลับโหมดสี"><i data-lucide="sun" id="theme-icon"></i></button>
     </div>
   </nav>
 
@@ -38,10 +38,10 @@
     </p>
     <div class="hero-cta">
       <button class="btn btn-primary" id="start-btn">
-        🚀 เริ่มต้นใช้งานฟรี
+        <i data-lucide="rocket"></i> เริ่มต้นใช้งานฟรี
       </button>
       <a href="#about" class="btn btn-secondary">
-        📖 เรียนรู้เพิ่มเติม
+        <i data-lucide="book-open"></i> เรียนรู้เพิ่มเติม
       </a>
     </div>
   </section>
@@ -52,39 +52,47 @@
     <!-- Section: Country & Trade Type Selector -->
     <section class="section" id="country-selector">
       <div class="section-header">
-        <h2>🌐 เลือกลักษณะการค้า</h2>
+        <h2><i data-lucide="globe"></i> เลือกลักษณะการค้า</h2>
         <p>ระบุต้นทาง ปลายทาง และประเภทสินค้าของคุณ เพื่อรับคำแนะนำที่แม่นยำ</p>
       </div>
 
       <div class="country-selector-card">
         <div class="trade-type-selector">
           <button class="trade-type-btn active" data-type="import">
-            <span class="trade-icon">📥</span>
+            <i data-lucide="download" class="trade-icon-svg"></i>
             นำเข้า (Import)
           </button>
           <button class="trade-type-btn" data-type="export">
-            <span class="trade-icon">📤</span>
+            <i data-lucide="upload" class="trade-icon-svg"></i>
             ส่งออก (Export)
           </button>
         </div>
 
         <div class="country-row">
-          <div class="form-group">
+          <div class="form-group country-autocomplete-container" id="origin-autocomplete-container" style="flex: 1;">
             <label class="form-label">ประเทศต้นทาง (Origin)</label>
-            <select class="form-select" id="origin-country">
-              <!-- Populated by JS -->
-            </select>
+            <div class="autocomplete-input-wrapper">
+              <img class="input-flag-indicator" id="origin-flag-indicator" src="https://flagcdn.com/w40/cn.png" alt="จีน">
+              <input type="text" class="form-input autocomplete-input" id="origin-country-input" placeholder="ค้นหาประเทศ เช่น จีน, US..." autocomplete="off">
+              <i data-lucide="search" class="input-search-icon"></i>
+            </div>
+            <div class="autocomplete-dropdown" id="origin-autocomplete-dropdown"></div>
           </div>
           
-          <button class="country-swap" id="swap-countries" title="สลับประเทศ">⇄</button>
+          <button class="country-swap" id="swap-countries" title="สลับประเทศ"><i data-lucide="arrow-left-right"></i></button>
           
-          <div class="form-group">
+          <div class="form-group country-autocomplete-container" id="dest-autocomplete-container" style="flex: 1;">
             <label class="form-label">ประเทศปลายทาง (Destination)</label>
-            <select class="form-select" id="dest-country">
-              <!-- Populated by JS -->
-            </select>
+            <div class="autocomplete-input-wrapper">
+              <img class="input-flag-indicator" id="dest-flag-indicator" src="https://flagcdn.com/w40/th.png" alt="ไทย">
+              <input type="text" class="form-input autocomplete-input" id="dest-country-input" placeholder="ค้นหาประเทศ เช่น ไทย, Japan..." autocomplete="off">
+              <i data-lucide="search" class="input-search-icon"></i>
+            </div>
+            <div class="autocomplete-dropdown" id="dest-autocomplete-dropdown"></div>
           </div>
         </div>
+
+        <div id="route-warning-container" style="display: none; margin-bottom: 1.5rem;"></div>
 
         <div class="form-group" style="margin-bottom: 2rem;">
           <label class="form-label">หมวดหมู่สินค้าหลัก</label>
@@ -95,7 +103,7 @@
 
         <div class="start-btn-wrapper">
           <button class="btn btn-primary" id="to-dashboard-btn" style="width: 100%; max-width: 300px; justify-content: center;">
-            ดำเนินการต่อ ➡️
+            ดำเนินการต่อ <i data-lucide="arrow-right"></i>
           </button>
         </div>
       </div>
@@ -118,28 +126,28 @@
       <div class="feature-grid">
         <!-- Checklist Card -->
         <div class="feature-card card-checklist" id="card-checklist">
-          <div class="card-icon">📋</div>
+          <div class="card-icon"><i data-lucide="clipboard-list"></i></div>
           <h3 class="card-title">เช็คลิสต์ขั้นตอน</h3>
           <p class="card-desc">รายการสิ่งที่ต้องทำ Step-by-step ตั้งแต่เริ่มจนรับสินค้า พร้อมเอกสารที่ต้องใช้</p>
         </div>
 
         <!-- Calculator Card -->
         <div class="feature-card card-calculator" id="card-calculator">
-          <div class="card-icon">🧮</div>
+          <div class="card-icon"><i data-lucide="calculator"></i></div>
           <h3 class="card-title">คำนวณภาษีนำเข้า</h3>
           <p class="card-desc">คำนวณมูลค่า CIF, อากรขาเข้า และภาษีมูลค่าเพิ่ม (VAT 7%) ก่อนตัดสินใจ</p>
         </div>
 
         <!-- Product Check Card -->
         <div class="feature-card card-product" id="card-product">
-          <div class="card-icon">🚫</div>
+          <div class="card-icon"><i data-lucide="ban"></i></div>
           <h3 class="card-title">ตรวจสินค้าต้องห้าม</h3>
           <p class="card-desc">เช็คว่าสินค้าของคุณเป็นสินค้าต้องห้าม หรือต้องขอใบอนุญาตพิเศษหรือไม่</p>
         </div>
 
         <!-- Warnings Card -->
         <div class="feature-card card-warnings" id="card-warnings">
-          <div class="card-icon">⚠️</div>
+          <div class="card-icon"><i data-lucide="alert-triangle"></i></div>
           <h3 class="card-title">กฎระเบียบ & คำเตือน</h3>
           <p class="card-desc">ตรวจสอบกฎหมาย, สิทธิ FTA, และข้อควรระวังสำคัญสำหรับสินค้านี้</p>
         </div>
@@ -149,8 +157,8 @@
     <!-- Feature Panel: Checklist -->
     <section class="feature-panel" id="panel-checklist">
       <div class="panel-header">
-        <button class="panel-back">←</button>
-        <h2 class="panel-title">📋 เช็คลิสต์ขั้นตอน</h2>
+        <button class="panel-back"><i data-lucide="arrow-left"></i></button>
+        <h2 class="panel-title"><i data-lucide="clipboard-list"></i> เช็คลิสต์ขั้นตอน</h2>
       </div>
       <div id="checklist-wrapper"></div>
     </section>
@@ -158,8 +166,8 @@
     <!-- Feature Panel: Calculator -->
     <section class="feature-panel" id="panel-calculator">
       <div class="panel-header">
-        <button class="panel-back">←</button>
-        <h2 class="panel-title">🧮 คำนวณภาษีนำเข้า</h2>
+        <button class="panel-back"><i data-lucide="arrow-left"></i></button>
+        <h2 class="panel-title"><i data-lucide="calculator"></i> คำนวณภาษีนำเข้า</h2>
       </div>
       <div id="calculator-wrapper"></div>
     </section>
@@ -167,8 +175,8 @@
     <!-- Feature Panel: Product Check -->
     <section class="feature-panel" id="panel-product">
       <div class="panel-header">
-        <button class="panel-back">←</button>
-        <h2 class="panel-title">🚫 ตรวจสินค้าต้องห้าม / จำกัด</h2>
+        <button class="panel-back"><i data-lucide="arrow-left"></i></button>
+        <h2 class="panel-title"><i data-lucide="ban"></i> ตรวจสินค้าต้องห้าม / จำกัด</h2>
       </div>
       <div id="product-checker-wrapper"></div>
     </section>
@@ -176,8 +184,8 @@
     <!-- Feature Panel: Warnings -->
     <section class="feature-panel" id="panel-warnings">
       <div class="panel-header">
-        <button class="panel-back">←</button>
-        <h2 class="panel-title">⚠️ กฎระเบียบ & คำเตือน</h2>
+        <button class="panel-back"><i data-lucide="arrow-left"></i></button>
+        <h2 class="panel-title"><i data-lucide="alert-triangle"></i> กฎระเบียบ & คำเตือน</h2>
       </div>
       <div id="warnings-wrapper"></div>
     </section>
@@ -189,9 +197,39 @@
     <p>TradePilot AI &copy; 2026. สร้างเพื่อเป็นข้อมูลเบื้องต้นเท่านั้น ไม่ใช่คำแนะนำทางกฎหมาย.</p>
     <p style="margin-top: 0.5rem; font-size: 0.8rem;">
       <a href="https://www.customs.go.th" target="_blank" rel="noopener">กรมศุลกากร</a> | 
-      <a href="#" target="_blank" rel="noopener">GitHub Repository</a>
+      <a href="https://github.com/DARWINZY/Trade_Pilot" target="_blank" rel="noopener">GitHub Repository</a>
     </p>
   </footer>
+
+  <!-- About Modal -->
+  <div id="about-modal" class="modal-overlay">
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <div class="modal-header">
+        <span class="modal-icon"><i data-lucide="globe"></i></span>
+        <h2>เกี่ยวกับ TradePilot AI</h2>
+      </div>
+      <div class="modal-body">
+        <p><strong>TradePilot AI</strong> คือระบบผู้ช่วยอัจฉริยะที่พัฒนาขึ้นเพื่อสนับสนุนผู้ประกอบการและบุคคลทั่วไปที่สนใจในการทำธุรกิจนำเข้าและส่งออกสินค้าระหว่างประเทศ</p>
+        
+        <h3><i data-lucide="lightbulb" class="inline-icon"></i> ฟีเจอร์หลักของเรา:</h3>
+        <ul>
+          <li><strong><i data-lucide="clipboard-list" class="inline-icon"></i> เช็คลิสต์ขั้นตอนการค้า:</strong> แนะนำขั้นตอนแบบทีละสเต็ป (Step-by-step) แยกตามประเภทสินค้าและประเทศคู่ค้า พร้อมระบุเอกสารที่จำเป็น</li>
+          <li><strong><i data-lucide="calculator" class="inline-icon"></i> คำนวณภาษีนำเข้า:</strong> คำนวณค่า CIF, อากรขาเข้าเบื้องต้น และภาษีมูลค่าเพิ่ม (VAT 7%) ช่วยวางแผนต้นทุน</li>
+          <li><strong><i data-lucide="ban" class="inline-icon"></i> ตรวจสินค้าต้องห้าม/จำกัด:</strong> ค้นหาประวัติสินค้าเพื่อดูว่าติดควบคุมศุลกากร หรือต้องขอใบอนุญาตพิเศษจากหน่วยงานใดหรือไม่</li>
+          <li><strong><i data-lucide="alert-triangle" class="inline-icon"></i> กฎระเบียบและสิทธิพิเศษ (FTA):</strong> แจ้งเตือนข้อจำกัดทางกฎหมายเฉพาะประเทศ และแนะนำสิทธิลดหย่อนภาษี (เช่น Form E)</li>
+        </ul>
+
+        <h3><i data-lucide="shield-alert" class="inline-icon"></i> ข้อจำกัดความรับผิดชอบ (Disclaimer):</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+          ข้อมูลทั้งหมดในระบบนี้รวบรวมเพื่อวัตถุประสงค์ในการให้ความรู้และเป็นแนวทางเบื้องต้นเท่านั้น ไม่ใช่คำแนะนำทางกฎหมายอย่างเป็นทางการ การนำเข้าหรือส่งออกจริงอาจมีเงื่อนไข รายละเอียด และอัตราภาษีที่ต่างออกไปตามพิกัดศุลกากร (HS Code) และกฎระเบียบของแต่ละหน่วยงานในขณะนั้น โปรดตรวจสอบข้อมูลอย่างเป็นทางการกับทางกรมศุลกากรหรือหน่วยงานภาครัฐที่เกี่ยวข้องอีกครั้งก่อนดำเนินธุรกรรม
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Icon Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- App Scripts -->
   <script src="js/data.js"></script>

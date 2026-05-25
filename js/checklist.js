@@ -24,14 +24,16 @@ function renderChecklist(tradeType, productCategory) {
   completedItems = saved ? new Set(JSON.parse(saved)) : new Set();
 
   const categoryInfo = PRODUCT_CATEGORIES.find(c => c.id === productCategory);
-  const categoryLabel = categoryInfo ? `${categoryInfo.icon} ${categoryInfo.name}` : '📦 ทั่วไป';
-  const tradeLabel = tradeType === 'import' ? '📥 นำเข้า' : '📤 ส่งออก';
+  const categoryIcon = categoryInfo ? categoryInfo.icon : 'package';
+  const categoryName = categoryInfo ? categoryInfo.name : 'ทั่วไป';
+  const tradeIcon = tradeType === 'import' ? 'download' : 'upload';
+  const tradeName = tradeType === 'import' ? 'นำเข้า' : 'ส่งออก';
 
   container.innerHTML = `
     <div class="checklist-container">
       <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <span style="padding: 0.35rem 0.85rem; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-cyan); font-weight: 500;">${tradeLabel}</span>
-        <span style="padding: 0.35rem 0.85rem; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-purple); font-weight: 500;">${categoryLabel}</span>
+        <span style="padding: 0.35rem 0.85rem; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-cyan); font-weight: 500; display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="${tradeIcon}"></i> ${tradeName}</span>
+        <span style="padding: 0.35rem 0.85rem; background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-blue); font-weight: 500; display: inline-flex; align-items: center; gap: 0.35rem;"><i data-lucide="${categoryIcon}"></i> ${categoryName}</span>
       </div>
       
       <div class="checklist-progress">
@@ -56,6 +58,10 @@ function renderChecklist(tradeType, productCategory) {
   });
 
   updateProgress();
+  
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 function renderChecklistItem(item, index, tradeType, productCategory) {
@@ -70,7 +76,7 @@ function renderChecklistItem(item, index, tradeType, productCategory) {
         <div class="item-desc">${item.desc}</div>
         ${item.docs && item.docs.length > 0 ? `
           <div class="item-docs">
-            ${item.docs.map(doc => `<span class="doc-tag">📄 ${doc}</span>`).join('')}
+            ${item.docs.map(doc => `<span class="doc-tag" style="display:inline-flex; align-items:center; gap:0.2rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${doc}</span>`).join('')}
           </div>
         ` : ''}
       </div>

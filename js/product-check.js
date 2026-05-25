@@ -78,9 +78,9 @@ function searchProduct() {
     prohibitedMatches.forEach(item => {
       html += `
         <div class="status-card status-danger">
-          <div class="status-icon">🔴</div>
+          <div class="status-icon"><i data-lucide="x-circle"></i></div>
           <div class="status-content">
-            <h4>🚫 ห้ามนำเข้า — ${item.name}</h4>
+            <h4>ห้ามนำเข้า — ${item.name}</h4>
             <p>${item.reason}</p>
           </div>
         </div>
@@ -93,16 +93,16 @@ function searchProduct() {
     restrictedMatches.forEach(item => {
       html += `
         <div class="status-card status-warn">
-          <div class="status-icon">🟡</div>
+          <div class="status-icon"><i data-lucide="alert-triangle"></i></div>
           <div class="status-content">
-            <h4>⚠️ ต้องมีใบอนุญาต — ${item.name}</h4>
+            <h4>ต้องมีใบอนุญาต — ${item.name}</h4>
             <p>${item.reason}</p>
-            <div class="agency-tag">🏢 หน่วยงาน: ${item.agency}</div>
+            <div class="agency-tag" style="display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="building" style="width:12px; height:12px; stroke-width:2.2;"></i> หน่วยงาน: ${item.agency}</div>
             ${item.docs && item.docs.length > 0 ? `
               <div style="margin-top: 0.75rem;">
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600;">📄 เอกสารที่ต้องใช้:</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600; display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> เอกสารที่ต้องใช้:</div>
                 <div class="item-docs">
-                  ${item.docs.map(doc => `<span class="doc-tag">📄 ${doc}</span>`).join('')}
+                  ${item.docs.map(doc => `<span class="doc-tag" style="display:inline-flex; align-items:center; gap:0.2rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${doc}</span>`).join('')}
                 </div>
               </div>
             ` : ''}
@@ -116,9 +116,9 @@ function searchProduct() {
     // No matches — likely okay
     html = `
       <div class="status-card status-pass">
-        <div class="status-icon">🟢</div>
+        <div class="status-icon"><i data-lucide="check-circle"></i></div>
         <div class="status-content">
-          <h4>✅ ไม่พบในรายการสินค้าต้องห้าม/จำกัด</h4>
+          <h4>ไม่พบในรายการสินค้าต้องห้าม/จำกัด</h4>
           <p>สินค้า "<strong>${escapeHtml(query)}</strong>" ไม่อยู่ในรายการสินค้าต้องห้ามหรือสินค้าจำกัดที่เราบันทึกไว้ 
           อย่างไรก็ตาม กรุณาตรวจสอบกับกรมศุลกากรอีกครั้งเพื่อความแน่ใจ เนื่องจากรายการนี้อาจไม่ครอบคลุมทุกรายการ</p>
         </div>
@@ -129,15 +129,19 @@ function searchProduct() {
   // Add disclaimer
   html += `
     <div style="margin-top: 1rem; padding: 1rem; background: rgba(6, 182, 212, 0.08); border-radius: var(--radius-md); border: 1px solid rgba(6, 182, 212, 0.15);">
-      <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
-        ℹ️ <strong>ข้อมูลอ้างอิง:</strong> ข้อมูลสินค้าต้องห้ามและสินค้าจำกัดนี้รวบรวมจากกรมศุลกากร, อย., และหน่วยงานที่เกี่ยวข้อง 
-        กฎระเบียบอาจมีการเปลี่ยนแปลง กรุณาตรวจสอบกับหน่วยงานที่เกี่ยวข้องก่อนดำเนินการ
+      <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; display:inline-flex; align-items:center; gap:0.35rem;">
+        <i data-lucide="info" class="inline-icon" style="color: var(--accent-cyan); flex-shrink:0;"></i>
+        <span><strong>ข้อมูลอ้างอิง:</strong> ข้อมูลสินค้าต้องห้ามและสินค้าจำกัดนี้รวบรวมจากกรมศุลกากร, อย., และหน่วยงานที่เกี่ยวข้อง กฎระเบียบอาจมีการเปลี่ยนแปลง กรุณาตรวจสอบกับหน่วยงานที่เกี่ยวข้องก่อนดำเนินการ</span>
       </p>
     </div>
   `;
 
   resultContainer.innerHTML = html;
   resultContainer.classList.add('show');
+  
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 function escapeHtml(text) {

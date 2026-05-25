@@ -14,13 +14,13 @@ function renderCalculator() {
   container.innerHTML = `
     <div class="calculator-container">
       <div class="calc-input-card">
-        <h3>📝 กรอกข้อมูล</h3>
+        <h3><i data-lucide="edit-3" class="inline-icon"></i> กรอกข้อมูล</h3>
         <div class="calc-form">
           <div class="form-group">
             <label class="form-label">หมวดหมู่สินค้า</label>
             <select class="form-select" id="calc-category">
               ${PRODUCT_CATEGORIES.map(cat => `
-                <option value="${cat.id}">${cat.icon} ${cat.name} (อากร ~${cat.dutyRate}%)</option>
+                <option value="${cat.id}">${cat.name} (อากร ~${cat.dutyRate}%)</option>
               `).join('')}
             </select>
           </div>
@@ -58,15 +58,15 @@ function renderCalculator() {
           </div>
           
           <button class="btn btn-primary calc-btn" id="calc-btn">
-            🧮 คำนวณภาษี
+            <i data-lucide="calculator"></i> คำนวณภาษี
           </button>
         </div>
       </div>
       
       <div class="calc-result-card">
-        <h3>📊 ผลการคำนวณ</h3>
+        <h3><i data-lucide="bar-chart-2" class="inline-icon"></i> ผลการคำนวณ</h3>
         <div class="result-placeholder" id="result-placeholder">
-          <div class="placeholder-icon">🧮</div>
+          <div class="placeholder-icon"><i data-lucide="calculator" style="width: 48px; height: 48px; margin: 0 auto; stroke: var(--text-muted);"></i></div>
           <p>กรอกข้อมูลแล้วกด "คำนวณภาษี"<br>เพื่อดูผลลัพธ์</p>
         </div>
         <div class="result-breakdown" id="result-breakdown">
@@ -130,48 +130,52 @@ function calculate() {
 
   breakdown.innerHTML = `
     <div class="result-row">
-      <span class="result-label">📦 ราคาสินค้า (Cost)</span>
+      <span class="result-label"><i data-lucide="package" class="inline-icon"></i> ราคาสินค้า (Cost)</span>
       <span class="result-value">${formatCurrency(cost)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label">🛡️ ค่าประกัน (Insurance)</span>
+      <span class="result-label"><i data-lucide="shield" class="inline-icon"></i> ค่าประกัน (Insurance)</span>
       <span class="result-value">${formatCurrency(insurance)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label">🚛 ค่าขนส่ง (Freight)</span>
+      <span class="result-label"><i data-lucide="truck" class="inline-icon"></i> ค่าขนส่ง (Freight)</span>
       <span class="result-value">${formatCurrency(freight)}</span>
     </div>
     <div class="result-row" style="border-bottom: 2px solid var(--border-color);">
-      <span class="result-label"><strong>💼 มูลค่า CIF</strong></span>
+      <span class="result-label"><strong><i data-lucide="briefcase" class="inline-icon"></i> มูลค่า CIF</strong></span>
       <span class="result-value" style="color: var(--accent-blue);">${formatCurrency(cif)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label">🏛️ อากรขาเข้า (${dutyRate}%)</span>
+      <span class="result-label"><i data-lucide="landmark" class="inline-icon"></i> อากรขาเข้า (${dutyRate}%)</span>
       <span class="result-value" style="color: var(--accent-orange);">${formatCurrency(importDuty)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label">📋 ฐานภาษี VAT (CIF + อากร)</span>
+      <span class="result-label"><i data-lucide="file-text" class="inline-icon"></i> ฐานภาษี VAT (CIF + อากร)</span>
       <span class="result-value">${formatCurrency(vatBase)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label">💰 VAT (7%)</span>
-      <span class="result-value" style="color: var(--accent-purple);">${formatCurrency(vat)}</span>
+      <span class="result-label"><i data-lucide="banknote" class="inline-icon"></i> VAT (7%)</span>
+      <span class="result-value" style="color: var(--accent-blue);">${formatCurrency(vat)}</span>
     </div>
     <div class="result-row" style="border-top: 2px dashed var(--accent-orange); margin-top: 0.5rem; padding-top: 1rem;">
-      <span class="result-label"><strong>💸 ภาษีรวม (อากร + VAT)</strong></span>
+      <span class="result-label"><strong><i data-lucide="coins" class="inline-icon"></i> ภาษีรวม (อากร + VAT)</strong></span>
       <span class="result-value" style="color: var(--accent-red); font-size: 1.15rem;">${formatCurrency(totalTax)}</span>
     </div>
     <div class="result-row total">
-      <span class="result-label">🎯 ต้นทุนทั้งหมด (CIF + ภาษี)</span>
+      <span class="result-label"><i data-lucide="target" class="inline-icon"></i> ต้นทุนทั้งหมด (CIF + ภาษี)</span>
       <span class="result-value">${formatCurrency(totalCost)}</span>
     </div>
     <div style="margin-top: 1.25rem; padding: 1rem; background: rgba(6, 182, 212, 0.08); border-radius: var(--radius-md); border: 1px solid rgba(6, 182, 212, 0.15);">
       <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
-        ⚠️ <strong>หมายเหตุ:</strong> การคำนวณนี้เป็นการประมาณการเบื้องต้น อัตราอากรจริงขึ้นอยู่กับพิกัดศุลกากร (HS Code) ของสินค้า 
+        <i data-lucide="alert-triangle" class="inline-icon" style="color: var(--accent-orange);"></i> <strong>หมายเหตุ:</strong> การคำนวณนี้เป็นการประมาณการเบื้องต้น อัตราอากรจริงขึ้นอยู่กับพิกัดศุลกากร (HS Code) ของสินค้า 
         สินค้าบางรายการอาจมีภาษีสรรพสามิตเพิ่มเติม กรุณาตรวจสอบกับกรมศุลกากรอีกครั้ง
       </p>
     </div>
   `;
+  
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 function showError(message) {
@@ -180,10 +184,14 @@ function showError(message) {
   breakdown.classList.add('show');
   breakdown.innerHTML = `
     <div style="text-align: center; padding: 2rem; color: var(--accent-red);">
-      <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">⚠️</div>
+      <div style="margin-bottom: 0.75rem;"><i data-lucide="alert-triangle" style="width: 42px; height: 42px; stroke: var(--accent-red); margin: 0 auto; display: block;"></i></div>
       <p>${message}</p>
     </div>
   `;
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 function formatCurrency(amount) {
@@ -192,3 +200,17 @@ function formatCurrency(amount) {
     maximumFractionDigits: 2
   });
 }
+
+function updateCalculatorCategory(categoryId) {
+  const categorySelect = document.getElementById('calc-category');
+  const dutyRateInput = document.getElementById('calc-duty-rate');
+  if (categorySelect) {
+    categorySelect.value = categoryId;
+    const selected = PRODUCT_CATEGORIES.find(c => c.id === categoryId);
+    if (selected && dutyRateInput) {
+      dutyRateInput.placeholder = `${selected.dutyRate}% (ค่าเริ่มต้น ${selected.name})`;
+      dutyRateInput.value = '';
+    }
+  }
+}
+
