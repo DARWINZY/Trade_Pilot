@@ -3,16 +3,19 @@
 // ============================================
 
 // Application State
+// Application State
 const state = {
   tradeType: 'import', // 'import' or 'export'
   originCountry: 'CN',
   destCountry: 'TH',
   productCategory: 'general',
-  theme: 'dark' // 'dark' or 'light'
+  theme: 'dark', // 'dark' or 'light'
+  lang: 'th' // 'th' or 'en'
 };
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+  initLanguage();
   initTheme();
   initNavigation();
   initSelectors();
@@ -95,6 +98,143 @@ function applyTheme() {
     lucide.createIcons();
   }
 }
+
+// ---- Language Management ----
+function initLanguage() {
+  const savedLang = localStorage.getItem('tp_lang');
+  if (savedLang) {
+    state.lang = savedLang;
+  }
+  
+  applyLanguage();
+  
+  const langToggleBtn = document.getElementById('lang-toggle');
+  if (langToggleBtn) {
+    langToggleBtn.addEventListener('click', () => {
+      state.lang = state.lang === 'th' ? 'en' : 'th';
+      localStorage.setItem('tp_lang', state.lang);
+      applyLanguage();
+      
+      // Re-initialize country input display
+      const originCountry = COUNTRIES.find(c => c.code === state.originCountry);
+      const destCountry = COUNTRIES.find(c => c.code === state.destCountry);
+      if (originCountry) {
+        document.getElementById('origin-country-input').value = getCountryName(originCountry);
+      }
+      if (destCountry) {
+        document.getElementById('dest-country-input').value = getCountryName(destCountry);
+      }
+
+      // Re-populate category select
+      const categorySelect = document.getElementById('product-category');
+      if (categorySelect) {
+        categorySelect.innerHTML = PRODUCT_CATEGORIES.map(c => 
+          `<option value="${c.id}">${t(c.name)}</option>`
+        ).join('');
+        categorySelect.value = state.productCategory;
+      }
+      
+      // Save state before re-rendering dynamic panels
+      const calcCat = document.getElementById('calc-category')?.value;
+      const calcCost = document.getElementById('calc-cost')?.value;
+      const calcIns = document.getElementById('calc-insurance')?.value;
+      const calcFreight = document.getElementById('calc-freight')?.value;
+      const calcDuty = document.getElementById('calc-duty-rate')?.value;
+      const calcResultVisible = document.getElementById('result-breakdown')?.innerHTML.trim() !== '';
+
+      const prodSearch = document.getElementById('product-search')?.value;
+      const prodResultVisible = document.getElementById('product-result')?.innerHTML.trim() !== '';
+
+      // Re-render Calculator and Product Checker to apply translations
+      if (typeof renderCalculator === 'function') renderCalculator();
+      if (typeof renderProductChecker === 'function') renderProductChecker();
+
+      // Restore state and re-calculate if needed
+      if (typeof renderCalculator === 'function') {
+        if (calcCat !== undefined) document.getElementById('calc-category').value = calcCat;
+        if (calcCost !== undefined) document.getElementById('calc-cost').value = calcCost;
+        if (calcIns !== undefined) document.getElementById('calc-insurance').value = calcIns;
+        if (calcFreight !== undefined) document.getElementById('calc-freight').value = calcFreight;
+        if (calcDuty !== undefined) document.getElementById('calc-duty-rate').value = calcDuty;
+        if (calcResultVisible && typeof calculate === 'function') calculate();
+      }
+
+      if (typeof renderProductChecker === 'function') {
+        if (prodSearch !== undefined) document.getElementById('product-search').value = prodSearch;
+        if (prodResultVisible && typeof searchProduct === 'function') searchProduct();
+      }
+      
+      // Run warnings, checks and re-render current panel
+      validateTradeRoute();
+      handleHashChange(); // This will trigger re-render of active panels
+
+      // Re-apply icons for newly rendered components
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  }
+}
+
+function applyLanguage() {
+  // Update HTML lang attribute
+  document.documentElement.setAttribute('lang', state.lang);
+  
+  // Update language toggle button label
+  const langLabel = document.getElementById('lang-label');
+  if (langLabel) {
+    langLabel.textContent = state.lang === 'th' ? 'TH' : 'EN';
+  }
+  
+  // Translate page elements
+  translatePage();
+}
+
+function translatePage() {
+  // Translate title and meta description
+  if (state.lang === 'en') {
+    document.title = "TradePilot AI — International Trade Navigator";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', "Your digital assistant for international trade checklists, calculators, and regulation checks.");
+  } else {
+    document.title = "TradePilot AI — ระบบนำทางการค้าระหว่างประเทศ";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', "ตัวช่วยเช็คลิสต์ คำนวณภาษี และตรวจสอบกฎระเบียบสำหรับการนำเข้า-ส่งออกสินค้าระหว่างประเทศ");
+  }
+
+  // data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  
+  // data-i18n-html
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    el.innerHTML = t(key);
+  });
+  
+  // data-i18n-placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    el.setAttribute('placeholder', t(key));
+  });
+
+  // data-i18n-title
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    el.setAttribute('title', t(key));
+  });
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+const getCountryName = (c) => {
+  if (!c) return '';
+  return state.lang === 'en' ? c.enName : c.name;
+};
 
 // ---- Navigation ----
 function initNavigation() {
@@ -212,9 +352,9 @@ function setupAutocomplete(containerId, inputId, flagId, dropdownId, stateKey) {
   
   // Set initial value
   const initialCountry = COUNTRIES.find(c => c.code === state[stateKey]) || COUNTRIES[0];
-  input.value = initialCountry.name;
+  input.value = getCountryName(initialCountry);
   flagSpan.src = `https://flagcdn.com/w40/${initialCountry.code.toLowerCase()}.png`;
-  flagSpan.alt = initialCountry.name;
+  flagSpan.alt = getCountryName(initialCountry);
   
   // Render search suggestions
   function renderSuggestions(query = '') {
@@ -227,14 +367,15 @@ function setupAutocomplete(containerId, inputId, flagId, dropdownId, stateKey) {
     });
     
     if (filtered.length === 0) {
-      dropdown.innerHTML = '<div class="autocomplete-no-results">ไม่พบรายชื่อประเทศ</div>';
+      dropdown.innerHTML = `<div class="autocomplete-no-results">${t('autocomplete-no-results')}</div>`;
     } else {
       dropdown.innerHTML = filtered.map(c => {
         const isSelected = c.code === state[stateKey] ? 'selected' : '';
+        const cName = getCountryName(c);
         return `
           <div class="autocomplete-item ${isSelected}" data-code="${c.code}">
-            <img class="autocomplete-item-flag-img" src="https://flagcdn.com/w40/${c.code.toLowerCase()}.png" alt="${c.name}">
-            <span class="autocomplete-item-name">${c.name}</span>
+            <img class="autocomplete-item-flag-img" src="https://flagcdn.com/w40/${c.code.toLowerCase()}.png" alt="${cName}">
+            <span class="autocomplete-item-name">${cName}</span>
             <span class="autocomplete-item-code">${c.code}</span>
           </div>
         `;
@@ -256,9 +397,9 @@ function setupAutocomplete(containerId, inputId, flagId, dropdownId, stateKey) {
     if (!country) return;
     
     state[stateKey] = code;
-    input.value = country.name;
+    input.value = getCountryName(country);
     flagSpan.src = `https://flagcdn.com/w40/${country.code.toLowerCase()}.png`;
-    flagSpan.alt = country.name;
+    flagSpan.alt = getCountryName(country);
     dropdown.style.display = 'none';
     
     // Auto-toggle trade type
@@ -291,9 +432,9 @@ function setupAutocomplete(containerId, inputId, flagId, dropdownId, stateKey) {
       dropdown.style.display = 'none';
       const currentCountry = COUNTRIES.find(c => c.code === state[stateKey]);
       if (currentCountry) {
-        input.value = currentCountry.name;
+        input.value = getCountryName(currentCountry);
         flagSpan.src = `https://flagcdn.com/w40/${currentCountry.code.toLowerCase()}.png`;
-        flagSpan.alt = currentCountry.name;
+        flagSpan.alt = getCountryName(currentCountry);
       }
     }, 150);
   });
@@ -317,8 +458,8 @@ function validateTradeRoute() {
       <div class="route-warning-card">
         <div class="rw-icon"><i data-lucide="alert-octagon"></i></div>
         <div class="rw-text">
-          <strong>เส้นทางการค้าไม่ถูกต้อง</strong>
-          ประเทศต้นทางและปลายทางไม่สามารถเป็นประเทศเดียวกันได้สำหรับการค้าระหว่างประเทศ กรุณาเลือกประเทศใหม่
+          <strong>${t('เส้นทางการค้าไม่ถูกต้อง')}</strong>
+          ${t('ประเทศต้นทางและปลายทางไม่สามารถเป็นประเทศเดียวกันได้สำหรับการค้าระหว่างประเทศ กรุณาเลือกประเทศใหม่')}
         </div>
       </div>
     `;
@@ -328,8 +469,8 @@ function validateTradeRoute() {
       <div class="route-warning-card">
         <div class="rw-icon"><i data-lucide="ban"></i></div>
         <div class="rw-text">
-          <strong>เส้นทางการค้าถูกระงับ (Trade Embargo)</strong>
-          ประเทศเกาหลีเหนือ (North Korea) อยู่ภายใต้มาตรการคว่ำบาตรทางการค้าอย่างเข้มงวดจากองค์การสหประชาชาติ (UN Sanctions) ทำให้ไม่สามารถดำเนินพิธีการนำเข้า/ส่งออกเชิงพาณิชย์ทั่วไปได้
+          <strong>${t('เส้นทางการค้าถูกระงับ (Trade Embargo)')}</strong>
+          ${t('ประเทศเกาหลีเหนือ (North Korea) อยู่ภายใต้มาตรการคว่ำบาตรทางการค้าอย่างเข้มงวดจากองค์การสหประชาชาติ (UN Sanctions) ทำให้ไม่สามารถดำเนินพิธีการนำเข้า/ส่งออกเชิงพาณิชย์ทั่วไปได้')}
         </div>
       </div>
     `;
@@ -339,8 +480,8 @@ function validateTradeRoute() {
       <div class="route-warning-card">
         <div class="rw-icon"><i data-lucide="ban"></i></div>
         <div class="rw-text">
-          <strong>เส้นทางการค้ามีข้อจำกัดร้ายแรง (Sanctioned Route)</strong>
-          ประเทศอิหร่าน (Iran) อยู่ภายใต้ข้อจำกัดทางการเงินและการค้าของระบบระหว่างประเทศ ห้ามทำธุรกรรมการค้าหรือการขนส่งในสินค้ากลุ่มเทคโนโลยี พลังงาน และอุปกรณ์อุตสาหกรรม
+          <strong>${t('เส้นทางการค้ามีข้อจำกัดร้ายแรง (Sanctioned Route)')}</strong>
+          ${t('ประเทศอิหร่าน (Iran) อยู่ภายใต้ข้อจำกัดทางการเงินและการค้าของระบบระหว่างประเทศ ห้ามทำธุรกรรมการค้าหรือการขนส่งในสินค้ากลุ่มเทคโนโลยี พลังงาน และอุปกรณ์อุตสาหกรรม')}
         </div>
       </div>
     `;
@@ -350,8 +491,8 @@ function validateTradeRoute() {
       <div class="route-warning-card">
         <div class="rw-icon"><i data-lucide="ban"></i></div>
         <div class="rw-text">
-          <strong>เส้นทางการค้าถูกระงับ (Restricted Route)</strong>
-          ประเทศซีเรีย (Syria) อยู่ภายใต้มาตรการคว่ำบาตรระดับสากลอันเนื่องจากปัญหาความมั่นคง ไม่สามารถนำเข้าหรือส่งออกสินค้าระหว่างประเทศในเชิงพาณิชย์ปกติได้
+          <strong>${t('เส้นทางการค้าถูกระงับ (Restricted Route)')}</strong>
+          ${t('ประเทศซีเรีย (Syria) อยู่ภายใต้มาตรการคว่ำบาตรระดับสากลอันเนื่องจากปัญหาความมั่นคง ไม่สามารถนำเข้าหรือส่งออกสินค้าระหว่างประเทศในเชิงพาณิชย์ปกติได้')}
         </div>
       </div>
     `;
@@ -361,8 +502,8 @@ function validateTradeRoute() {
       <div class="route-warning-card">
         <div class="rw-icon"><i data-lucide="ban"></i></div>
         <div class="rw-text">
-          <strong>ข้อจำกัดการคว่ำบาตรทางการค้า (US-Cuba Embargo)</strong>
-          มีการคว่ำบาตรทางการค้าระหว่างสหรัฐอเมริกาและคิวบาอย่างเข้มงวด (US Embargo on Cuba) ห้ามเรือสินค้าหรือสายการบินดำเนินพิธีการค้าระหว่างสองประเทศนี้โดยตรง
+          <strong>${t('ข้อจำกัดการคว่ำบาตรทางการค้า (US-Cuba Embargo)')}</strong>
+          ${t('มีการคว่ำบาตรทางการค้าระหว่างสหรัฐอเมริกาและคิวบาอย่างเข้มงวด (US Embargo on Cuba) ห้ามเรือสินค้าหรือสายการบินดำเนินพิธีการค้าระหว่างสองประเทศนี้โดยตรง')}
         </div>
       </div>
     `;
@@ -372,8 +513,8 @@ function validateTradeRoute() {
       <div class="route-warning-card">
         <div class="rw-icon"><i data-lucide="alert-octagon"></i></div>
         <div class="rw-text">
-          <strong>เส้นทางการค้าระหว่างประเทศถูกระงับเนื่องจากสงคราม</strong>
-          การทำธุรกรรมและการขนส่งสินค้าระหว่างประเทศยูเครนและสหพันธรัฐรัสเซียถูกระงับโดยสิ้นเชิงเนื่องจากภาวะความขัดแย้งด้านความมั่นคง
+          <strong>${t('เส้นทางการค้าระหว่างประเทศถูกระงับเนื่องจากสงคราม')}</strong>
+          ${t('การทำธุรกรรมและการขนส่งสินค้าระหว่างประเทศยูเครนและสหพันธรัฐรัสเซียถูกระงับโดยสิ้นเชิงเนื่องจากภาวะความขัดแย้งด้านความมั่นคง')}
         </div>
       </div>
     `;
@@ -383,8 +524,8 @@ function validateTradeRoute() {
       <div class="route-warning-card info-only">
         <div class="rw-icon"><i data-lucide="info"></i></div>
         <div class="rw-text">
-          <strong>คู่ค้านอกประเทศไทย (เส้นทางการค้าทั่วไป)</strong>
-          ระบบนี้วิเคราะห์ข้อมูลอ้างอิงพิกัดและอัตราอากรศุลกากรของประเทศไทยเป็นหลัก เช็คลิสต์และข้อมูลคำนวณสำหรับคู่ค้านอกประเทศจะเป็นรูปแบบมาตรฐานทั่วไป ซึ่งอาจแตกต่างจากกฎหมายท้องถิ่นของประเทศนั้นๆ
+          <strong>${t('คู่ค้านอกประเทศไทย (เส้นทางการค้าทั่วไป)')}</strong>
+          ${t('ระบบนี้วิเคราะห์ข้อมูลอ้างอิงพิกัดและอัตราอากรศุลกากรของประเทศไทยเป็นหลัก เช็คลิสต์และข้อมูลคำนวณสำหรับคู่ค้านอกประเทศจะเป็นรูปแบบมาตรฐานทั่วไป ซึ่งอาจแตกต่างจากกฎหมายท้องถิ่นของประเทศนั้นๆ')}
         </div>
       </div>
     `;
@@ -414,7 +555,7 @@ function initSelectors() {
   
   // Populate category options
   categorySelect.innerHTML = PRODUCT_CATEGORIES.map(c => 
-    `<option value="${c.id}">${c.name}</option>`
+    `<option value="${c.id}">${t(c.name)}</option>`
   ).join('');
   categorySelect.value = state.productCategory;
   categorySelect.addEventListener('change', (e) => state.productCategory = e.target.value);
@@ -430,14 +571,14 @@ function initSelectors() {
     const destCountry = COUNTRIES.find(c => c.code === state.destCountry);
     
     if (originCountry) {
-      document.getElementById('origin-country-input').value = originCountry.name;
+      document.getElementById('origin-country-input').value = getCountryName(originCountry);
       document.getElementById('origin-flag-indicator').src = `https://flagcdn.com/w40/${state.originCountry.toLowerCase()}.png`;
-      document.getElementById('origin-flag-indicator').alt = originCountry.name;
+      document.getElementById('origin-flag-indicator').alt = getCountryName(originCountry);
     }
     if (destCountry) {
-      document.getElementById('dest-country-input').value = destCountry.name;
+      document.getElementById('dest-country-input').value = getCountryName(destCountry);
       document.getElementById('dest-flag-indicator').src = `https://flagcdn.com/w40/${state.destCountry.toLowerCase()}.png`;
-      document.getElementById('dest-flag-indicator').alt = destCountry.name;
+      document.getElementById('dest-flag-indicator').alt = getCountryName(destCountry);
     }
     
     // Auto-toggle trade type
@@ -492,14 +633,14 @@ function setTradeType(type) {
   const destCountry = COUNTRIES.find(c => c.code === state.destCountry);
   
   if (originCountry && originInput && originFlag) {
-    originInput.value = originCountry.name;
+    originInput.value = getCountryName(originCountry);
     originFlag.src = `https://flagcdn.com/w40/${state.originCountry.toLowerCase()}.png`;
-    originFlag.alt = originCountry.name;
+    originFlag.alt = getCountryName(originCountry);
   }
   if (destCountry && destInput && destFlag) {
-    destInput.value = destCountry.name;
+    destInput.value = getCountryName(destCountry);
     destFlag.src = `https://flagcdn.com/w40/${state.destCountry.toLowerCase()}.png`;
-    destFlag.alt = destCountry.name;
+    destFlag.alt = getCountryName(destCountry);
   }
   
   validateTradeRoute();
@@ -519,17 +660,20 @@ function updateDashboardContext() {
   const destInfo = COUNTRIES.find(c => c.code === state.destCountry) || { name: state.destCountry, flag: '🌍' };
   const categoryInfo = PRODUCT_CATEGORIES.find(c => c.id === state.productCategory) || PRODUCT_CATEGORIES[0];
   
-  const typeText = state.tradeType === 'import' ? 'การนำเข้า' : 'การส่งออก';
+  const originName = getCountryName(originInfo);
+  const destName = getCountryName(destInfo);
+  const catName = t(categoryInfo.name);
+  const editLabel = state.lang === 'en' ? 'Edit' : 'แก้ไข';
   
   document.getElementById('dashboard-context').innerHTML = `
-    <img class="context-flag-img" src="https://flagcdn.com/w40/${state.originCountry.toLowerCase()}.png" alt="${originInfo.name}">
-    <span>${originInfo.name}</span>
+    <img class="context-flag-img" src="https://flagcdn.com/w40/${state.originCountry.toLowerCase()}.png" alt="${originName}">
+    <span>${originName}</span>
     <span class="context-arrow">→</span>
-    <img class="context-flag-img" src="https://flagcdn.com/w40/${state.destCountry.toLowerCase()}.png" alt="${destInfo.name}">
-    <span>${destInfo.name}</span>
+    <img class="context-flag-img" src="https://flagcdn.com/w40/${state.destCountry.toLowerCase()}.png" alt="${destName}">
+    <span>${destName}</span>
     <span style="color: var(--border-color); margin: 0 0.5rem;">|</span>
-    <span style="display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="${categoryInfo.icon}"></i> ${categoryInfo.name}</span>
-    <button class="edit-context" id="edit-context-btn">แก้ไข</button>
+    <span style="display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="${categoryInfo.icon}"></i> ${catName}</span>
+    <button class="edit-context" id="edit-context-btn">${editLabel}</button>
   `;
   
   // Re-attach edit listener since we overwrote HTML
@@ -549,8 +693,8 @@ function updateDashboardBanner() {
     banner.innerHTML = `
       <div class="warning-icon"><i data-lucide="${warning.icon}"></i></div>
       <div class="warning-text">
-        <strong>${warning.title}</strong>
-        ${warning.text}
+        <strong>${t(warning.title)}</strong>
+        ${t(warning.text)}
       </div>
     `;
     banner.style.display = 'flex';

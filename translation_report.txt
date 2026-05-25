@@ -1,0 +1,6 @@
+Successfully loaded variables. COUNTRIES: 194, PRODUCT_CATEGORIES: 10, CHECKLISTS: 2, PROHIBITED_ITEMS: 6, RESTRICTED_ITEMS: 11, WARNINGS_DATA: 3, TRANSLATIONS: 2
+
+Total unique keys collected: 219
+Missing in TRANSLATIONS.th: 0
+
+Missing in TRANSLATIONS.en: 0

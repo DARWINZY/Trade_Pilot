@@ -25,9 +25,9 @@ function renderChecklist(tradeType, productCategory) {
 
   const categoryInfo = PRODUCT_CATEGORIES.find(c => c.id === productCategory);
   const categoryIcon = categoryInfo ? categoryInfo.icon : 'package';
-  const categoryName = categoryInfo ? categoryInfo.name : 'ทั่วไป';
+  const categoryName = categoryInfo ? t(categoryInfo.name) : t('สินค้าทั่วไป');
   const tradeIcon = tradeType === 'import' ? 'download' : 'upload';
-  const tradeName = tradeType === 'import' ? 'นำเข้า' : 'ส่งออก';
+  const tradeName = tradeType === 'import' ? t('นำเข้า') : t('ส่งออก');
 
   container.innerHTML = `
     <div class="checklist-container">
@@ -38,7 +38,7 @@ function renderChecklist(tradeType, productCategory) {
       
       <div class="checklist-progress">
         <div class="progress-header">
-          <span class="progress-label">ความคืบหน้า</span>
+          <span class="progress-label">${t('ความคืบหน้า')}</span>
           <span class="progress-value" id="progress-text">0 / ${currentChecklist.length}</span>
         </div>
         <div class="progress-bar">
@@ -72,11 +72,11 @@ function renderChecklistItem(item, index, tradeType, productCategory) {
       <div class="checklist-checkbox"></div>
       <div class="item-number">${index + 1}</div>
       <div class="item-content">
-        <div class="item-title">${item.title}</div>
-        <div class="item-desc">${item.desc}</div>
+        <div class="item-title">${t(item.title)}</div>
+        <div class="item-desc">${t(item.desc)}</div>
         ${item.docs && item.docs.length > 0 ? `
           <div class="item-docs">
-            ${item.docs.map(doc => `<span class="doc-tag" style="display:inline-flex; align-items:center; gap:0.2rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${doc}</span>`).join('')}
+            ${item.docs.map(doc => `<span class="doc-tag" style="display:inline-flex; align-items:center; gap:0.2rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${t(doc)}</span>`).join('')}
           </div>
         ` : ''}
       </div>

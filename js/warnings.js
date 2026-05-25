@@ -34,13 +34,13 @@ function renderWarnings(originCountry, destCountry, productCategory, tradeType) 
     <div class="warnings-container">
       <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
         <span style="padding: 0.35rem 0.85rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-red); font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
-          <i data-lucide="alert-octagon" class="inline-icon"></i> สำคัญมาก: ${allWarnings.filter(w => w.type === 'critical').length}
+          <i data-lucide="alert-octagon" class="inline-icon"></i> ${t('warn-summary-critical')}${allWarnings.filter(w => w.type === 'critical').length}
         </span>
         <span style="padding: 0.35rem 0.85rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-orange); font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
-          <i data-lucide="alert-triangle" class="inline-icon"></i> ควรทราบ: ${allWarnings.filter(w => w.type === 'important').length}
+          <i data-lucide="alert-triangle" class="inline-icon"></i> ${t('warn-summary-important')}${allWarnings.filter(w => w.type === 'important').length}
         </span>
         <span style="padding: 0.35rem 0.85rem; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 9999px; font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
-          <i data-lucide="info" class="inline-icon"></i> ข้อมูล: ${allWarnings.filter(w => w.type === 'info').length}
+          <i data-lucide="info" class="inline-icon"></i> ${t('warn-summary-info')}${allWarnings.filter(w => w.type === 'info').length}
         </span>
       </div>
       
@@ -49,7 +49,7 @@ function renderWarnings(originCountry, destCountry, productCategory, tradeType) 
       ${allWarnings.length === 0 ? `
         <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
           <div style="margin-bottom: 1rem;"><i data-lucide="check-circle" style="width: 48px; height: 48px; stroke: var(--accent-green); margin: 0 auto; display: block;"></i></div>
-          <p>ไม่มีคำเตือนเพิ่มเติมสำหรับตัวเลือกนี้</p>
+          <p>${t('warn-no-warnings')}</p>
         </div>
       ` : ''}
     </div>
@@ -68,17 +68,17 @@ function renderWarningCard(warning) {
   }[warning.type] || 'warning-info';
 
   const typeLabel = {
-    critical: 'สำคัญมาก',
-    important: 'ควรทราบ',
-    info: 'ข้อมูล',
-  }[warning.type] || 'ข้อมูล';
+    critical: t('warn-tag-critical'),
+    important: t('warn-tag-important'),
+    info: t('warn-tag-info'),
+  }[warning.type] || t('warn-tag-info');
 
   return `
     <div class="warning-card ${typeClass}">
       <div class="wc-icon"><i data-lucide="${warning.icon}"></i></div>
       <div class="wc-content">
-        <h4>${warning.title}</h4>
-        <p>${warning.text}</p>
+        <h4>${t(warning.title)}</h4>
+        <p>${t(warning.text)}</p>
         <span class="wc-tag">${typeLabel}</span>
       </div>
     </div>

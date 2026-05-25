@@ -11,7 +11,11 @@ function renderProductChecker() {
   const container = window._productContainer;
   if (!container) return;
 
-  const quickSearchTerms = [
+  const quickSearchTerms = state.lang === 'en' ? [
+    'E-cigarette', 'Cosmetics', 'Supplements', 'Medicine', 'Liquor',
+    'Drones', 'Pets', 'Plants', 'Weapons', 'Counterfeits',
+    'Buddha Images', 'Electronics', 'Fruits', 'Chemicals'
+  ] : [
     'บุหรี่ไฟฟ้า', 'เครื่องสำอาง', 'อาหารเสริม', 'ยา', 'สุรา',
     'โดรน', 'สัตว์เลี้ยง', 'พืช', 'อาวุธ', 'ของก๊อป',
     'พระพุทธรูป', 'อิเล็กทรอนิกส์', 'ผลไม้', 'สารเคมี'
@@ -21,12 +25,12 @@ function renderProductChecker() {
     <div class="product-checker">
       <div class="search-box">
         <input type="text" class="form-input" id="product-search" 
-               placeholder="🔍 พิมพ์ชื่อสินค้าที่ต้องการตรวจสอบ เช่น บุหรี่ไฟฟ้า, เครื่องสำอาง, สุรา...">
-        <button class="btn btn-primary" id="product-search-btn">ตรวจสอบ</button>
+               placeholder="${t('prod-search-placeholder')}">
+        <button class="btn btn-primary" id="product-search-btn">${t('prod-search-btn')}</button>
       </div>
       
       <div class="quick-tags">
-        <div class="quick-tags-label">🏷️ ค้นหาด่วน:</div>
+        <div class="quick-tags-label">${t('prod-quick-tags-label')}</div>
         <div class="quick-tags-list">
           ${quickSearchTerms.map(term => `
             <button class="quick-tag" data-term="${term}">${term}</button>
@@ -80,8 +84,8 @@ function searchProduct() {
         <div class="status-card status-danger">
           <div class="status-icon"><i data-lucide="x-circle"></i></div>
           <div class="status-content">
-            <h4>ห้ามนำเข้า — ${item.name}</h4>
-            <p>${item.reason}</p>
+            <h4>${t('ห้ามนำเข้า — ')}${t(item.name)}</h4>
+            <p>${t(item.reason)}</p>
           </div>
         </div>
       `;
@@ -95,14 +99,14 @@ function searchProduct() {
         <div class="status-card status-warn">
           <div class="status-icon"><i data-lucide="alert-triangle"></i></div>
           <div class="status-content">
-            <h4>ต้องมีใบอนุญาต — ${item.name}</h4>
-            <p>${item.reason}</p>
-            <div class="agency-tag" style="display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="building" style="width:12px; height:12px; stroke-width:2.2;"></i> หน่วยงาน: ${item.agency}</div>
+            <h4>${t('ต้องมีใบอนุญาต — ')}${t(item.name)}</h4>
+            <p>${t(item.reason)}</p>
+            <div class="agency-tag" style="display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="building" style="width:12px; height:12px; stroke-width:2.2;"></i> ${t('หน่วยงาน: ')}${t(item.agency)}</div>
             ${item.docs && item.docs.length > 0 ? `
               <div style="margin-top: 0.75rem;">
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600; display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> เอกสารที่ต้องใช้:</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600; display:inline-flex; align-items:center; gap:0.25rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${t('เอกสารที่ต้องใช้: ')}</div>
                 <div class="item-docs">
-                  ${item.docs.map(doc => `<span class="doc-tag" style="display:inline-flex; align-items:center; gap:0.2rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${doc}</span>`).join('')}
+                  ${item.docs.map(doc => `<span class="doc-tag" style="display:inline-flex; align-items:center; gap:0.2rem;"><i data-lucide="file-text" style="width:12px; height:12px; stroke-width:2.2;"></i> ${t(doc)}</span>`).join('')}
                 </div>
               </div>
             ` : ''}
@@ -118,9 +122,8 @@ function searchProduct() {
       <div class="status-card status-pass">
         <div class="status-icon"><i data-lucide="check-circle"></i></div>
         <div class="status-content">
-          <h4>ไม่พบในรายการสินค้าต้องห้าม/จำกัด</h4>
-          <p>สินค้า "<strong>${escapeHtml(query)}</strong>" ไม่อยู่ในรายการสินค้าต้องห้ามหรือสินค้าจำกัดที่เราบันทึกไว้ 
-          อย่างไรก็ตาม กรุณาตรวจสอบกับกรมศุลกากรอีกครั้งเพื่อความแน่ใจ เนื่องจากรายการนี้อาจไม่ครอบคลุมทุกรายการ</p>
+          <h4>${t('prod-not-found')}</h4>
+          <p>${t('prod-not-found-desc-start')}<strong>${escapeHtml(query)}</strong>${t('prod-not-found-desc-end')}</p>
         </div>
       </div>
     `;
@@ -131,7 +134,7 @@ function searchProduct() {
     <div style="margin-top: 1rem; padding: 1rem; background: rgba(6, 182, 212, 0.08); border-radius: var(--radius-md); border: 1px solid rgba(6, 182, 212, 0.15);">
       <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; display:inline-flex; align-items:center; gap:0.35rem;">
         <i data-lucide="info" class="inline-icon" style="color: var(--accent-cyan); flex-shrink:0;"></i>
-        <span><strong>ข้อมูลอ้างอิง:</strong> ข้อมูลสินค้าต้องห้ามและสินค้าจำกัดนี้รวบรวมจากกรมศุลกากร, อย., และหน่วยงานที่เกี่ยวข้อง กฎระเบียบอาจมีการเปลี่ยนแปลง กรุณาตรวจสอบกับหน่วยงานที่เกี่ยวข้องก่อนดำเนินการ</span>
+        <span><strong>${t('prod-ref-label')}</strong> ${t('prod-ref-text')}</span>
       </p>
     </div>
   `;

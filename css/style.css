@@ -266,6 +266,36 @@ h4 { font-size: 1.25rem; }
   transform: scale(1.05);
 }
 
+.lang-toggle {
+  height: 44px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--border-color);
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: var(--transition-normal);
+}
+
+.lang-toggle:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.05);
+}
+
+.lang-toggle i,
+.lang-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* ---- Hero Section ---- */
 .hero-section {
   min-height: 100vh;

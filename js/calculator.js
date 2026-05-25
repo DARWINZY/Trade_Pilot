@@ -14,60 +14,60 @@ function renderCalculator() {
   container.innerHTML = `
     <div class="calculator-container">
       <div class="calc-input-card">
-        <h3><i data-lucide="edit-3" class="inline-icon"></i> กรอกข้อมูล</h3>
+        <h3><i data-lucide="edit-3" class="inline-icon"></i> ${t('กรอกข้อมูล')}</h3>
         <div class="calc-form">
           <div class="form-group">
-            <label class="form-label">หมวดหมู่สินค้า</label>
+            <label class="form-label">${t('หมวดหมู่สินค้า')}</label>
             <select class="form-select" id="calc-category">
               ${PRODUCT_CATEGORIES.map(cat => `
-                <option value="${cat.id}">${cat.name} (อากร ~${cat.dutyRate}%)</option>
+                <option value="${cat.id}">${t(cat.name)} (${state.lang === 'en' ? 'Duty' : 'อากร'} ~${cat.dutyRate}%)</option>
               `).join('')}
             </select>
           </div>
           
           <div class="form-group">
-            <label class="form-label">ราคาสินค้า (Cost)</label>
+            <label class="form-label">${t('ราคาสินค้า (Cost)')}</label>
             <div class="input-group">
               <span class="input-prefix">฿</span>
-              <input type="number" class="form-input" id="calc-cost" placeholder="เช่น 50000" min="0" step="100">
+              <input type="number" class="form-input" id="calc-cost" placeholder="${state.lang === 'en' ? 'e.g. 50000' : 'เช่น 50000'}" min="0" step="100">
             </div>
           </div>
           
           <div class="form-group">
-            <label class="form-label">ค่าประกัน (Insurance)</label>
+            <label class="form-label">${t('ค่าประกัน (Insurance)')}</label>
             <div class="input-group">
               <span class="input-prefix">฿</span>
-              <input type="number" class="form-input" id="calc-insurance" placeholder="เช่น 1000" min="0" step="100" value="0">
+              <input type="number" class="form-input" id="calc-insurance" placeholder="${state.lang === 'en' ? 'e.g. 1000' : 'เช่น 1000'}" min="0" step="100" value="0">
             </div>
           </div>
           
           <div class="form-group">
-            <label class="form-label">ค่าขนส่ง (Freight)</label>
+            <label class="form-label">${t('ค่าขนส่ง (Freight)')}</label>
             <div class="input-group">
               <span class="input-prefix">฿</span>
-              <input type="number" class="form-input" id="calc-freight" placeholder="เช่น 5000" min="0" step="100" value="0">
+              <input type="number" class="form-input" id="calc-freight" placeholder="${state.lang === 'en' ? 'e.g. 5000' : 'เช่น 5000'}" min="0" step="100" value="0">
             </div>
           </div>
           
           <div class="form-group">
-            <label class="form-label">อัตราอากรขาเข้า (กำหนดเอง)</label>
+            <label class="form-label">${t('อัตราอากรขาเข้า (กำหนดเอง)')}</label>
             <div class="input-group">
               <span class="input-prefix">%</span>
-              <input type="number" class="form-input" id="calc-duty-rate" placeholder="อัตโนมัติตามหมวดหมู่" min="0" max="100" step="0.5">
+              <input type="number" class="form-input" id="calc-duty-rate" placeholder="${state.lang === 'en' ? 'Auto-selected by category' : 'อัตโนมัติตามหมวดหมู่'}" min="0" max="100" step="0.5">
             </div>
           </div>
           
           <button class="btn btn-primary calc-btn" id="calc-btn">
-            <i data-lucide="calculator"></i> คำนวณภาษี
+            <i data-lucide="calculator"></i> ${state.lang === 'en' ? 'Calculate Tax' : 'คำนวณภาษี'}
           </button>
         </div>
       </div>
       
       <div class="calc-result-card">
-        <h3><i data-lucide="bar-chart-2" class="inline-icon"></i> ผลการคำนวณ</h3>
+        <h3><i data-lucide="bar-chart-2" class="inline-icon"></i> ${t('ผลการคำนวณ')}</h3>
         <div class="result-placeholder" id="result-placeholder">
           <div class="placeholder-icon"><i data-lucide="calculator" style="width: 48px; height: 48px; margin: 0 auto; stroke: var(--text-muted);"></i></div>
-          <p>กรอกข้อมูลแล้วกด "คำนวณภาษี"<br>เพื่อดูผลลัพธ์</p>
+          <p>${t('calc-placeholder')}</p>
         </div>
         <div class="result-breakdown" id="result-breakdown">
           <!-- Results will be rendered here -->
@@ -83,7 +83,7 @@ function renderCalculator() {
   categorySelect.addEventListener('change', () => {
     const selected = PRODUCT_CATEGORIES.find(c => c.id === categorySelect.value);
     if (selected) {
-      dutyRateInput.placeholder = `${selected.dutyRate}% (ค่าเริ่มต้น ${selected.name})`;
+      dutyRateInput.placeholder = `${selected.dutyRate}% (${state.lang === 'en' ? 'Default ' + t(selected.name) : 'ค่าเริ่มต้น ' + t(selected.name)})`;
       dutyRateInput.value = '';
     }
   });
@@ -111,7 +111,7 @@ function calculate() {
   const dutyRate = customDutyRate !== '' ? parseFloat(customDutyRate) : (category ? category.dutyRate : 15);
 
   if (cost <= 0) {
-    showError('กรุณากรอกราคาสินค้า');
+    showError(state.lang === 'en' ? 'Please enter the cost of goods.' : 'กรุณากรอกราคาสินค้า');
     return;
   }
 
@@ -130,27 +130,27 @@ function calculate() {
 
   breakdown.innerHTML = `
     <div class="result-row">
-      <span class="result-label"><i data-lucide="package" class="inline-icon"></i> ราคาสินค้า (Cost)</span>
+      <span class="result-label"><i data-lucide="package" class="inline-icon"></i> ${t('ราคาสินค้า (Cost)')}</span>
       <span class="result-value">${formatCurrency(cost)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label"><i data-lucide="shield" class="inline-icon"></i> ค่าประกัน (Insurance)</span>
+      <span class="result-label"><i data-lucide="shield" class="inline-icon"></i> ${t('ค่าประกัน (Insurance)')}</span>
       <span class="result-value">${formatCurrency(insurance)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label"><i data-lucide="truck" class="inline-icon"></i> ค่าขนส่ง (Freight)</span>
+      <span class="result-label"><i data-lucide="truck" class="inline-icon"></i> ${t('ค่าขนส่ง (Freight)')}</span>
       <span class="result-value">${formatCurrency(freight)}</span>
     </div>
     <div class="result-row" style="border-bottom: 2px solid var(--border-color);">
-      <span class="result-label"><strong><i data-lucide="briefcase" class="inline-icon"></i> มูลค่า CIF</strong></span>
+      <span class="result-label"><strong><i data-lucide="briefcase" class="inline-icon"></i> ${t('มูลค่า CIF')}</strong></span>
       <span class="result-value" style="color: var(--accent-blue);">${formatCurrency(cif)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label"><i data-lucide="landmark" class="inline-icon"></i> อากรขาเข้า (${dutyRate}%)</span>
+      <span class="result-label"><i data-lucide="landmark" class="inline-icon"></i> ${t('อากรขาเข้า')} (${dutyRate}%)</span>
       <span class="result-value" style="color: var(--accent-orange);">${formatCurrency(importDuty)}</span>
     </div>
     <div class="result-row">
-      <span class="result-label"><i data-lucide="file-text" class="inline-icon"></i> ฐานภาษี VAT (CIF + อากร)</span>
+      <span class="result-label"><i data-lucide="file-text" class="inline-icon"></i> ${state.lang === 'en' ? 'VAT Base (CIF + Duty)' : 'ฐานภาษี VAT (CIF + อากร)'}</span>
       <span class="result-value">${formatCurrency(vatBase)}</span>
     </div>
     <div class="result-row">
@@ -158,17 +158,16 @@ function calculate() {
       <span class="result-value" style="color: var(--accent-blue);">${formatCurrency(vat)}</span>
     </div>
     <div class="result-row" style="border-top: 2px dashed var(--accent-orange); margin-top: 0.5rem; padding-top: 1rem;">
-      <span class="result-label"><strong><i data-lucide="coins" class="inline-icon"></i> ภาษีรวม (อากร + VAT)</strong></span>
+      <span class="result-label"><strong><i data-lucide="coins" class="inline-icon"></i> ${state.lang === 'en' ? 'Total Tax (Duty + VAT)' : 'ภาษีรวม (อากร + VAT)'}</strong></span>
       <span class="result-value" style="color: var(--accent-red); font-size: 1.15rem;">${formatCurrency(totalTax)}</span>
     </div>
     <div class="result-row total">
-      <span class="result-label"><i data-lucide="target" class="inline-icon"></i> ต้นทุนทั้งหมด (CIF + ภาษี)</span>
+      <span class="result-label"><i data-lucide="target" class="inline-icon"></i> ${state.lang === 'en' ? 'Total Cost (CIF + Tax)' : 'ต้นทุนทั้งหมด (CIF + ภาษี)'}</span>
       <span class="result-value">${formatCurrency(totalCost)}</span>
     </div>
     <div style="margin-top: 1.25rem; padding: 1rem; background: rgba(6, 182, 212, 0.08); border-radius: var(--radius-md); border: 1px solid rgba(6, 182, 212, 0.15);">
       <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
-        <i data-lucide="alert-triangle" class="inline-icon" style="color: var(--accent-orange);"></i> <strong>หมายเหตุ:</strong> การคำนวณนี้เป็นการประมาณการเบื้องต้น อัตราอากรจริงขึ้นอยู่กับพิกัดศุลกากร (HS Code) ของสินค้า 
-        สินค้าบางรายการอาจมีภาษีสรรพสามิตเพิ่มเติม กรุณาตรวจสอบกับกรมศุลกากรอีกครั้ง
+        <i data-lucide="alert-triangle" class="inline-icon" style="color: var(--accent-orange);"></i> <strong>${t('หมายเหตุ:')}</strong> ${t('การคำนวณนี้เป็นการประมาณการเบื้องต้น อัตราอากรจริงขึ้นอยู่กับพิกัดศุลกากร (HS Code) ของสินค้า สินค้าบางรายการอาจมีภาษีสรรพสามิตเพิ่มเติม กรุณาตรวจสอบกับกรมศุลกากรอีกครั้ง')}
       </p>
     </div>
   `;
@@ -208,7 +207,7 @@ function updateCalculatorCategory(categoryId) {
     categorySelect.value = categoryId;
     const selected = PRODUCT_CATEGORIES.find(c => c.id === categoryId);
     if (selected && dutyRateInput) {
-      dutyRateInput.placeholder = `${selected.dutyRate}% (ค่าเริ่มต้น ${selected.name})`;
+      dutyRateInput.placeholder = `${selected.dutyRate}% (${state.lang === 'en' ? 'Default ' + t(selected.name) : 'ค่าเริ่มต้น ' + t(selected.name)})`;
       dutyRateInput.value = '';
     }
   }
